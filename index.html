@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-color: #0b0b10;
+    --text: #e4e4ed;
+    --text-muted: #9d9db5;
+    --accent: #7c5cfc;
+    --accent-hover: #9578ff;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --radius: 16px;
+    --glass-bg: rgba(22, 22, 34, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-color);
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(124, 92, 252, 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08), transparent 25%);
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ---- HEADER ---- */
+  header {
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+  }
+  header h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #c4b5fd, #7c5cfc, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  header p { 
+    color: var(--text-muted); 
+    font-size: 1.1rem; 
+    font-weight: 300;
+  }
+
+  /* ---- LAYOUT ---- */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 2rem;
+    align-items: start;
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (max-width: 850px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  /* ---- GLASSMORPHISM PANELS ---- */
+  .panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--glass-shadow);
+  }
+  .panel h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .panel h2::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* ---- FORM ---- */
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  .form-group input:focus {
+    border-color: var(--accent);
+    background: rgba(124, 92, 252, 0.05);
+    box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.2);
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  .checkbox-row label {
+    font-size: 0.95rem;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #5b3ed6);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(124, 92, 252, 0.4);
+  }
+  .btn-primary:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(124, 92, 252, 0.6);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+  .btn-edit { 
+    background: rgba(255, 255, 255, 0.05); 
+    color: var(--text); 
+    border: 1px solid var(--glass-border); 
+  }
+  .btn-edit:hover { 
+    background: rgba(124, 92, 252, 0.1);
+    border-color: var(--accent); 
+    color: #fff; 
+  }
+  .btn-delete { 
+    background: transparent; 
+    color: var(--red); 
+    border: 1px solid transparent; 
+  }
+  .btn-delete:hover { 
+    background: rgba(239, 68, 68, 0.1); 
+    border-color: rgba(239, 68, 68, 0.3); 
+  }
+
+  /* ---- SEARCH & FILTERS ---- */
+  .toolbar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .search-wrapper {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-wrapper input {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    color: var(--text);
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s;
+  }
+  .search-wrapper input:focus { border-color: var(--accent); }
+  .search-wrapper::before {
+    content: '🔍';
+    position: absolute;
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    font-size: 0.9rem;
+  }
+
+  .filter-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .chip {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .chip.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 2px 10px rgba(124, 92, 252, 0.3);
+  }
+  .chip:hover:not(.active) { 
+    border-color: var(--text-muted); 
+    color: var(--text); 
+  }
+
+  /* ---- STATS ---- */
+  .stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-card .num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat-card .label { 
+    font-size: 0.8rem; 
+    color: var(--text-muted); 
+    margin-top: 0.3rem; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---- BOOK CARDS ---- */
+  .book-grid { 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .book-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.4s ease backwards;
+  }
+  .book-card:hover { 
+    border-color: rgba(124, 92, 252, 0.5); 
+    transform: translateY(-4px) scale(1.02); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .book-icon {
+    width: 60px;
+    height: 80px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+  .book-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .book-icon.read { 
+    background-color: rgba(16, 185, 129, 0.1); 
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .book-icon.unread { 
+    background-color: rgba(124, 92, 252, 0.1);
+    border: 1px solid var(--glass-border);
+  }
+
+  .book-info { flex: 1; min-width: 0; }
+  .book-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.2rem;
+  }
+  .book-author { 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+  }
+
+  .book-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--yellow);
+    background: rgba(245, 158, 11, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+
+  .badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-read { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+  .badge-unread { background: rgba(124, 92, 252, 0.15); color: var(--accent); }
+
+  .book-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--glass-bg);
+    border: 1px dashed var(--glass-border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+  }
+  .empty-state .icon { font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.5; }
+  .empty-state p { font-size: 1.05rem; }
+
+  /* ---- MODAL ---- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .modal-overlay.active { 
+    display: flex; 
+    opacity: 1;
+  }
+  .modal {
+    background: #1a1a24;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    width: 90%;
+    max-width: 420px;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .modal-overlay.active .modal { transform: scale(1); }
+  .modal h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .modal-btns { display: flex; gap: 0.8rem; margin-top: 1.8rem; }
+  .modal-btns .btn { flex: 1; }
+
+  /* ---- TOAST NOTIFICATION ---- */
+  .toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    z-index: 200;
+  }
+  .toast {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #fff;
+    background: rgba(30, 30, 45, 0.95);
+    backdrop-filter: blur(10px);
+    border-left: 4px solid var(--accent);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    animation: slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), fadeOut 0.4s ease 3s forwards;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .toast-success { border-left-color: var(--green); }
+  .toast-error { border-left-color: var(--red); }
+  
+  @keyframes slideIn { 
+    from { transform: translateX(100%); opacity: 0; } 
+    to { transform: translateX(0); opacity: 1; } 
+  }
+  @keyframes fadeOut { 
+    to { opacity: 0; transform: translateY(-10px) scale(0.95); } 
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Book Library</h1>
+  <p>Manage your premium reading collection</p>
+</header>
+
+<div class="container">
+  <!-- LEFT PANEL: Add Book Form -->
+  <div>
+    <div class="panel" id="form-panel">
+      <h2 id="form-title">Add New Book</h2>
+      <input type="hidden" id="edit-id">
+
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" placeholder="e.g. The Martian">
+      </div>
+      <div class="form-group">
+        <label for="author">Author</label>
+        <input type="text" id="author" placeholder="e.g. Andy Weir">
+      </div>
+      <div class="form-group">
+        <label for="rating">Rating (0.0 - 5.0)</label>
+        <input type="number" id="rating" min="0" max="5" step="0.1" placeholder="4.5">
+      </div>
+      <div class="form-group">
+        <label for="cover_url">Cover Image URL</label>
+        <input type="url" id="cover_url" placeholder="e.g. https://example.com/cover.jpg">
+      </div>
+      <div class="form-group">
+        <label for="genre">Genre</label>
+        <input type="text" id="genre" placeholder="e.g. Science Fiction">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="is_read">
+        <label for="is_read">Mark as read</label>
+      </div>
+      <button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">Save Book</button>
+      <button class="btn btn-edit" id="cancel-btn" onclick="cancelEdit()" style="display:none; width:100%; margin-top:0.8rem;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Book List -->
+  <div>
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="num" id="stat-total">0</div>
+        <div class="label">Books</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="stat-read">0</div>
+        <div class="label">Read</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="stat-avg">0.0</div>
+        <div class="label">Avg Rating</div>
+      </div>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="toolbar">
+      <div class="search-wrapper">
+        <input type="text" id="search" placeholder="Search title or author..." oninput="renderBooks()">
+      </div>
+      <div class="filter-chips">
+        <div class="chip active" onclick="setFilter('all', this)">All</div>
+        <div class="chip" onclick="setFilter('read', this)">Read</div>
+        <div class="chip" onclick="setFilter('unread', this)">Unread</div>
+        <div class="chip" onclick="setFilter('top', this)">Top Rated</div>
+      </div>
+    </div>
+
+    <!-- Book List -->
+    <div class="book-grid" id="book-grid"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- Edit Modal (for confirming delete) -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Delete Book</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">Are you sure you want to permanently delete "<strong id="delete-title" style="color:var(--text)"></strong>"? This action cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="btn btn-edit" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-primary" style="background:linear-gradient(135deg, var(--red), #991b1b);" onclick="confirmDelete()">Delete Permanently</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+let books = [];
+let activeFilter = 'all';
+let deleteTargetId = null;
+
+async function fetchBooks() {
+  try {
+    const res = await fetch(`${API}/books`);
+    books = await res.json();
+    updateStats();
+    renderBooks();
+  } catch (err) {
+    toast('Failed to load books. Is the server running?', 'error');
+  }
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = books.length;
+  document.getElementById('stat-read').textContent = books.filter(b => b.is_read).length;
+  const avg = books.length ? (books.reduce((s, b) => s + b.rating, 0) / books.length).toFixed(1) : '0.0';
+  document.getElementById('stat-avg').textContent = avg;
+}
+
+function renderBooks() {
+  const search = document.getElementById('search').value.toLowerCase();
+  let filtered = books.filter(b => {
+    const matchesSearch = b.title.toLowerCase().includes(search) || b.author.toLowerCase().includes(search);
+    if (!matchesSearch) return false;
+    if (activeFilter === 'read') return b.is_read;
+    if (activeFilter === 'unread') return !b.is_read;
+    if (activeFilter === 'top') return b.rating >= 4.0;
+    return true;
+  });
+
+  const grid = document.getElementById('book-grid');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">&#128218;</div>
+        <p>${books.length === 0 ? 'Your library is empty. Add a book to get started!' : 'No books match your search or filter.'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((b, i) => `
+    <div class="book-card" style="animation-delay: ${i * 0.05}s">
+      <div class="book-icon ${b.is_read ? 'read' : 'unread'}" ${b.cover_url ? `style="background-image: url('${b.cover_url}')"` : ''}>
+        ${!b.cover_url ? (b.is_read ? '📖' : '📕') : ''}
+      </div>
+      <div class="book-info">
+        <div class="book-title" title="${escAttr(b.title)}">${escHtml(b.title)}</div>
+        <div class="book-author">${escHtml(b.author)}</div>
+        ${b.genre ? `<div style="margin-top: 4px;"><span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); text-transform: none; padding: 1px 6px;">${escHtml(b.genre)}</span></div>` : ''}
+        <div class="book-actions">
+          <button class="btn btn-sm btn-edit" onclick="startEdit(${b.id})">Edit</button>
+          <button class="btn btn-sm btn-delete" onclick="openDeleteModal(${b.id}, '${escAttr(b.title)}')">Delete</button>
+        </div>
+      </div>
+      <div class="book-meta">
+        <div class="rating">⭐ ${b.rating.toFixed(1)}</div>
+        <span class="badge ${b.is_read ? 'badge-read' : 'badge-unread'}">
+          ${b.is_read ? 'Read' : 'Unread'}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderBooks();
+}
+
+async function handleSubmit() {
+  const editId = document.getElementById('edit-id').value;
+  const data = {
+    title: document.getElementById('title').value.trim(),
+    author: document.getElementById('author').value.trim(),
+    rating: parseFloat(document.getElementById('rating').value),
+    is_read: document.getElementById('is_read').checked,
+    cover_url: document.getElementById('cover_url').value.trim() || null,
+    genre: document.getElementById('genre').value.trim() || null,
+  };
+
+  if (!data.title || !data.author || isNaN(data.rating)) {
+    toast('Please fill in all required fields.', 'error');
+    return;
+  }
+  if (data.rating < 0 || data.rating > 5) {
+    toast('Rating must be between 0.0 and 5.0.', 'error');
+    return;
+  }
+
+  const method = editId ? 'PUT' : 'POST';
+  const url = editId ? `${API}/books/${editId}` : `${API}/books`;
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast(editId ? 'Book updated successfully!' : 'Book added to library!', 'success');
+      clearForm();
+      fetchBooks();
+    } else {
+      const err = await res.json();
+      toast(err.detail || 'Something went wrong.', 'error');
+    }
+  } catch(e) {
+    toast('Failed to connect to the server.', 'error');
+  }
+}
+
+function startEdit(id) {
+  const book = books.find(b => b.id === id);
+  if (!book) return;
+
+  document.getElementById('edit-id').value = id;
+  document.getElementById('title').value = book.title;
+  document.getElementById('author').value = book.author;
+  document.getElementById('rating').value = book.rating;
+  document.getElementById('is_read').checked = book.is_read;
+  document.getElementById('cover_url').value = book.cover_url || '';
+  document.getElementById('genre').value = book.genre || '';
+  document.getElementById('form-title').innerHTML = '✏️ Edit Book';
+  document.getElementById('submit-btn').textContent = 'Update Book';
+  document.getElementById('cancel-btn').style.display = 'inline-flex';
+  document.getElementById('title').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  clearForm();
+}
+
+function clearForm() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('title').value = '';
+  document.getElementById('author').value = '';
+  document.getElementById('rating').value = '';
+  document.getElementById('is_read').checked = false;
+  document.getElementById('cover_url').value = '';
+  document.getElementById('genre').value = '';
+  document.getElementById('form-title').textContent = 'Add New Book';
+  document.getElementById('submit-btn').textContent = 'Save Book';
+  document.getElementById('cancel-btn').style.display = 'none';
+}
+
+function openDeleteModal(id, title) {
+  deleteTargetId = id;
+  document.getElementById('delete-title').textContent = title;
+  document.getElementById('delete-modal').classList.add('active');
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').classList.remove('active');
+  deleteTargetId = null;
+}
+
+async function confirmDelete() {
+  if (!deleteTargetId) return;
+  try {
+    const res = await fetch(`${API}/books/${deleteTargetId}`, { method: 'DELETE' });
+    if (res.ok) {
+      toast('Book permanently deleted.', 'success');
+      fetchBooks();
+    }
+  } catch(e) {
+    toast('Failed to delete book.', 'error');
+  }
+  closeDeleteModal();
+}
+
+function toast(msg, type) {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `
+    <span>${type === 'success' ? '✅' : '❌'}</span>
+    <span>${msg}</span>
+  `;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function escAttr(s) {
+  return s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+document.querySelectorAll('#form-panel input').forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+});
+
+fetchBooks();
+</script>
+
+</body>
+</html>
