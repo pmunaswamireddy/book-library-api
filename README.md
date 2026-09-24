@@ -1,4 +1,4 @@
-# 📚 Premium Book Library API
+#  Premium Book Library API
 
 A professional, full-stack Book Management System built with **FastAPI**, **SQLAlchemy**, and a stunning **Glassmorphism** frontend. This project transformed from a simple tutorial into a production-ready application with advanced features and a premium aesthetic.
 
@@ -6,7 +6,7 @@ A professional, full-stack Book Management System built with **FastAPI**, **SQLA
 ![Backend](https://img.shields.io/badge/Backend-FastAPI-009688)
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57)
 
-## ✨ Features
+##  Features
 
 - **Premium UI:** A modern, dark-themed interface using glassmorphism principles and the "Outfit" typography.
 - **Book Covers:** Support for custom book cover image URLs to bring your library to life.
@@ -16,7 +16,7 @@ A professional, full-stack Book Management System built with **FastAPI**, **SQLA
 - **Full CRUD:** Seamlessly add, edit, and delete books from your collection.
 - **Production Ready:** Includes CORS security, input validation, and absolute pathing.
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 - **Backend:** FastAPI (Python)
 - **Database:** SQLAlchemy (SQLite)
@@ -24,7 +24,7 @@ A professional, full-stack Book Management System built with **FastAPI**, **SQLA
 - **Frontend:** Vanilla HTML5, CSS3 (Modern Glassmorphism), JavaScript (ES6+)
 - **Containerization:** Docker
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Local Setup
 
@@ -47,7 +47,7 @@ A professional, full-stack Book Management System built with **FastAPI**, **SQLA
 4. **Access the UI:**
    Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
-## 📦 Deployment
+##  Deployment
 
 This project is ready to be deployed to **Google Cloud Run**, **Render**, or **Railway** using the provided `Dockerfile`.
 
